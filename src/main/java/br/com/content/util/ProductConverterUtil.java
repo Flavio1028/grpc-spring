@@ -7,7 +7,7 @@ import br.com.content.dto.ProductOutputDTO;
 public class ProductConverterUtil {
 
 	public static ProductOutputDTO productToProductOutputDTO(Product product) {
-		return new ProductOutputDTO(product.getId(), product.getNome(), product.getPrice(),
+		return new ProductOutputDTO(product.getId(), product.getName(), product.getPrice(),
 				product.getQuantityInStock());
 	}
 	
