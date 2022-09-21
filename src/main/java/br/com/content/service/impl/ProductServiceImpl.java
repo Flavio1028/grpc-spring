@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import br.com.content.domain.Product;
 import br.com.content.dto.ProductInputDTO;
 import br.com.content.dto.ProductOutputDTO;
+import br.com.content.exception.AlreadyExistsException;
 import br.com.content.repository.ProductRepository;
 import br.com.content.service.IProductService;
 import br.com.content.util.ProductConverterUtil;
@@ -22,6 +23,7 @@ public class ProductServiceImpl implements IProductService {
 
 	@Override
 	public ProductOutputDTO create(ProductInputDTO inputDTO) {
+		this.checkDuplicity(inputDTO.getName());
 		Product product = ProductConverterUtil.ProductInputDTOToProduct(inputDTO);
 		product = this.repository.save(product);
 		return ProductConverterUtil.productToProductOutputDTO(product);
@@ -43,6 +45,12 @@ public class ProductServiceImpl implements IProductService {
 	public List<ProductOutputDTO> findAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	private void checkDuplicity(String name) {
+		this.repository.findByNameIgnoreCase(name).ifPresent(e -> {
+			throw new AlreadyExistsException(name);
+		});
 	}
 
 }
