@@ -1,8 +1,12 @@
 package br.com.content.resources;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import br.com.content.Empty;
 import br.com.content.ProductRequest;
 import br.com.content.ProductResponse;
+import br.com.content.ProductResponseList;
 import br.com.content.ProductServiceGrpc.ProductServiceImplBase;
 import br.com.content.RequestById;
 import br.com.content.dto.ProductInputDTO;
@@ -57,6 +61,23 @@ public class ProductResource extends ProductServiceImplBase {
 		responseObserver.onCompleted();
 	}
 
-	
+	@Override
+	public void findAll(Empty request, StreamObserver<ProductResponseList> responseObserver) {
+		List<ProductOutputDTO> outputDTOList = this.productService.findAll();
+
+		List<ProductResponse> productResponseList = outputDTOList.stream()
+				.map(product -> ProductResponse.newBuilder()
+					.setId(product.getId())
+					.setName(product.getName())
+					.setPrice(product.getPrice())
+					.setQuantityInStock(product.getQuantityInStock())
+				.build())
+			.collect(Collectors.toList());
+
+		responseObserver.onNext(ProductResponseList.newBuilder()
+				.addAllProducts(productResponseList)
+			.build());
+		responseObserver.onCompleted();
+	}		
 
 }
