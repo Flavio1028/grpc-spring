@@ -1,12 +1,12 @@
 package br.com.content.service.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,8 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.content.domain.Product;
 import br.com.content.dto.ProductInputDTO;
-import br.com.content.dto.ProductOutputDTO;
 import br.com.content.exception.AlreadyExistsException;
+import br.com.content.exception.NotFoundException;
 import br.com.content.repository.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,32 +30,58 @@ class ProductServiceImplTest {
 	private ProductServiceImpl productServiceImpl;
 	
 	@Test
-	@DisplayName("when create product service is call with valid data a product is returned")
-	void createProductSuccessTest() {
+    @DisplayName("when create product service is call with valid data a product is returned")
+    public void createProductSuccessTest() {
+        var productCreated = new Product(1L, "product name", 10.00, 10);
 
-		Product product = new Product(1L, "product name", 10.00, 10);
-		ProductInputDTO inputDTO = new ProductInputDTO("product name", 10.00, 10);
+        when(productRepository.save(any())).thenReturn(productCreated);
 
-		when(productRepository.save(any())).thenReturn(product);
+        var productInput = new ProductInputDTO("product name", 10.00, 10);
 
-		// Call service
-		ProductOutputDTO outputDTO = this.productServiceImpl.create(inputDTO);
+        var productOutputDTO = productServiceImpl.create(productInput);
 
-		Assertions.assertThat(outputDTO).usingRecursiveComparison().isEqualTo(product);
-	}
+        assertThat(productOutputDTO)
+                .usingRecursiveComparison()
+                .isEqualTo(productCreated);
+    }
 
-	@Test
-	@DisplayName("when create product service is call with duplicated name, throw AlreadyExistsException")
-	void createProductExceptionTest() {
+    @Test
+    @DisplayName("when create product service is call with duplicated name, throw AlreadyExistsException")
+    public void createProductExceptionTest() {
+        var product = new Product(1L, "product name", 10.00, 10);
 
-		Product product = new Product(1L, "Product A", 10.00, 10);
-		ProductInputDTO inputDTO = new ProductInputDTO("Product A", 10.00, 10);
+        when(productRepository.findByNameIgnoreCase(any())).thenReturn(Optional.of(product));
 
-		when(productRepository.findByNameIgnoreCase(any())).thenReturn(Optional.of(product));
+        var productInput = new ProductInputDTO("product name", 10.00, 10);
 
-		// Call service
-		assertThatExceptionOfType(AlreadyExistsException.class)
-				.isThrownBy(() -> this.productServiceImpl.create(inputDTO));
-	}
+        assertThatExceptionOfType(AlreadyExistsException.class)
+                .isThrownBy(() -> productServiceImpl.create(productInput));
+    }
 
+    @Test
+    @DisplayName("when findById product service is call with valid id a product is returned")
+    public void findProductByIdSuccessTest() {
+        var id = 1L;
+        var productCreated = new Product(1L, "product name", 10.00, 10);
+
+        when(productRepository.findById(any())).thenReturn(Optional.of(productCreated));
+
+        var productOutputDTO = productServiceImpl.findById(id);
+
+        assertThat(productOutputDTO)
+                .usingRecursiveComparison()
+                .isEqualTo(productCreated);
+    }
+
+    @Test
+    @DisplayName("when findById product service is call with invalid id, throw NotFoundException")
+    public void findProductByIdExceptionTest() {
+        var id = 1L;
+
+        when(productRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(NotFoundException.class)
+                .isThrownBy(() -> productServiceImpl.findById(id));
+    }
+	
 }

@@ -6,7 +6,7 @@ public class AlreadyExistsException extends BaseBusinessException {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String ERROR_MESSAGE = "Produto %s já cadastrado no sistema";
+	private static final String ERROR_MESSAGE = "Produto %s já cadastrado no sistema.";
 
 	private final String name;
 
@@ -16,12 +16,12 @@ public class AlreadyExistsException extends BaseBusinessException {
 	}
 
 	@Override
-	public Status getStatusCode() {
+	public Status getStatus() {
 		return Status.ALREADY_EXISTS;
 	}
 
 	@Override
-	public String getErrorMessage() {
+	public String getMessage() {
 		return String.format(ERROR_MESSAGE, this.name);
 	}
 

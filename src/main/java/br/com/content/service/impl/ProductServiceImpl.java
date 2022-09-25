@@ -8,6 +8,7 @@ import br.com.content.domain.Product;
 import br.com.content.dto.ProductInputDTO;
 import br.com.content.dto.ProductOutputDTO;
 import br.com.content.exception.AlreadyExistsException;
+import br.com.content.exception.NotFoundException;
 import br.com.content.repository.ProductRepository;
 import br.com.content.service.IProductService;
 import br.com.content.util.ProductConverterUtil;
@@ -31,8 +32,9 @@ public class ProductServiceImpl implements IProductService {
 
 	@Override
 	public ProductOutputDTO findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Product product = this.repository.findById(id)
+			.orElseThrow(() -> new NotFoundException(id));
+		return ProductConverterUtil.productToProductOutputDTO(product);
 	}
 
 	@Override
@@ -48,9 +50,10 @@ public class ProductServiceImpl implements IProductService {
 	}
 	
 	private void checkDuplicity(String name) {
-		this.repository.findByNameIgnoreCase(name).ifPresent(e -> {
-			throw new AlreadyExistsException(name);
-		});
+		  this.repository.findByNameIgnoreCase(name)
+          .ifPresent(e -> {
+              throw new AlreadyExistsException(name);
+          });
 	}
 
 }

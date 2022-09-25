@@ -3,6 +3,7 @@ package br.com.content.resources;
 import br.com.content.ProductRequest;
 import br.com.content.ProductResponse;
 import br.com.content.ProductServiceGrpc.ProductServiceImplBase;
+import br.com.content.RequestById;
 import br.com.content.dto.ProductInputDTO;
 import br.com.content.dto.ProductOutputDTO;
 import br.com.content.service.IProductService;
@@ -26,6 +27,19 @@ public class ProductResource extends ProductServiceImplBase {
 		
 		ProductOutputDTO productOutput = this.productService.create(productInput);
 
+		responseObserver.onNext(ProductResponse.newBuilder()
+				.setId(productOutput.getId())
+				.setName(productOutput.getName())
+				.setPrice(productOutput.getPrice())
+				.setQuantityInStock(productOutput.getQuantityInStock())
+			.build());
+		responseObserver.onCompleted();		
+	}
+
+	@Override
+	public void findById(RequestById request, StreamObserver<ProductResponse> responseObserver) {
+		ProductOutputDTO productOutput = this.productService.findById(request.getId());
+		
 		responseObserver.onNext(ProductResponse.newBuilder()
 				.setId(productOutput.getId())
 				.setName(productOutput.getName())
