@@ -4,8 +4,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.3</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<version>2.5.6</version>
+		<relativePath />
 	</parent>
 	<groupId>br.com.content</groupId>
 	<artifactId>grpc-spring</artifactId>
@@ -69,11 +69,10 @@
 
 		<!-- -->
 		<dependency>
-			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
-			<version>9.3.0</version>
-			<scope>test</scope>
-		</dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <scope>test</scope>
+        </dependency>
 
 	</dependencies>
 
