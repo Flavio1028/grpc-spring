@@ -39,8 +39,9 @@ public class ProductServiceImpl implements IProductService {
 
 	@Override
 	public void delete(Long id) {
-		// TODO Auto-generated method stub
-
+		Product product = this.repository.findById(id)
+				.orElseThrow(() -> new NotFoundException(id));
+		this.repository.delete(product);
 	}
 
 	@Override

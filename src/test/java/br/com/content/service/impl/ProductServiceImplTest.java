@@ -2,6 +2,7 @@ package br.com.content.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -82,6 +83,28 @@ class ProductServiceImplTest {
 
         assertThatExceptionOfType(NotFoundException.class)
                 .isThrownBy(() -> productServiceImpl.findById(id));
+    }
+    
+    @Test
+    @DisplayName("when delete product service is call with valid id should does not throw")
+    public void deleteProductSuccessTest() {
+        var id = 1L;
+        var product = new Product(1L, "product name", 10.00, 10);
+
+        when(productRepository.findById(any())).thenReturn(Optional.of(product));
+
+        assertThatNoException().isThrownBy(() -> productServiceImpl.delete(id));
+    }
+
+    @Test
+    @DisplayName("when delete product service is call with invalid id, throw NotFoundException")
+    public void deleteProductExceptionTest() {
+        var id = 1L;
+
+        when(productRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(NotFoundException.class)
+                .isThrownBy(() -> productServiceImpl.delete(id));
     }
 	
 }
