@@ -13,7 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
+import br.com.content.Empty;
 import br.com.content.ProductRequest;
+import br.com.content.ProductResponseList;
 import br.com.content.ProductServiceGrpc;
 import br.com.content.RequestById;
 import br.com.content.domain.Product;
@@ -108,6 +110,17 @@ class ProductResourceIntegrationTest {
         assertThatExceptionOfType(StatusRuntimeException.class)
                 .isThrownBy(() -> blockingStub.findById(request))
                 .withMessage("NOT_FOUND: Produto com ID 100 não encontrado.");
+    }
+    
+    @Test
+    @DisplayName("when findAll is called, returns a list of products")
+    public void findAllProductSuccessTest() {
+        var request = Empty.newBuilder().build();
+
+        var response = blockingStub.findAll(request);
+
+        assertThat(response).isInstanceOf(ProductResponseList.class);
+        assertThat(response.getProductsCount()).isEqualTo(2);
     }
 	
 }
