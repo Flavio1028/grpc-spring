@@ -2,6 +2,7 @@ package br.com.content.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,16 +79,35 @@ class ProductResourceIntegrationTest {
 		assertThat(response.getName()).isEqualTo(product.getName());
 	}
 
-	    @Test
-	    @DisplayName("when findById with invalid id is called, throw NotFoundException")
-	    public void findByIdProductNotFoundExceptionTest() {
-	        var request = RequestById.newBuilder()
-	                .setId(100L)
-	                .build();
+	@Test
+	@DisplayName("when findById with invalid id is called, throw NotFoundException")
+	public void findByIdProductNotFoundExceptionTest() {
+		var request = RequestById.newBuilder().setId(100L).build();
 
-	        assertThatExceptionOfType(StatusRuntimeException.class)
-	                .isThrownBy(() -> blockingStub.findById(request))
-	                .withMessage("NOT_FOUND: Produto com ID 100 não encontrado.");
-	    }
+		assertThatExceptionOfType(StatusRuntimeException.class).isThrownBy(() -> blockingStub.findById(request))
+				.withMessage("NOT_FOUND: Produto com ID 100 não encontrado.");
+	}
+	
+	@Test
+    @DisplayName("when delete with valid id is called a product is deleted")
+    public void deleteProductSuccessTest() {
+        var request = RequestById.newBuilder()
+                .setId(2L)
+                .build();
+
+        assertThatNoException().isThrownBy(() -> blockingStub.delete(request));
+    }
+
+    @Test
+    @DisplayName("when delete with invalid id is called, throw NotFoundException")
+    public void deleteProductNotFoundExceptionTest() {
+        var request = RequestById.newBuilder()
+                .setId(100L)
+                .build();
+
+        assertThatExceptionOfType(StatusRuntimeException.class)
+                .isThrownBy(() -> blockingStub.findById(request))
+                .withMessage("NOT_FOUND: Produto com ID 100 não encontrado.");
+    }
 	
 }
