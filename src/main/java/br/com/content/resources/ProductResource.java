@@ -1,5 +1,6 @@
 package br.com.content.resources;
 
+import br.com.content.Empty;
 import br.com.content.ProductRequest;
 import br.com.content.ProductResponse;
 import br.com.content.ProductServiceGrpc.ProductServiceImplBase;
@@ -48,5 +49,14 @@ public class ProductResource extends ProductServiceImplBase {
 			.build());
 		responseObserver.onCompleted();		
 	}
+
+	@Override
+	public void delete(RequestById request, StreamObserver<Empty> responseObserver) {
+		this.productService.delete(request.getId());
+		responseObserver.onNext(Empty.newBuilder().build());
+		responseObserver.onCompleted();
+	}
+
+	
 
 }
