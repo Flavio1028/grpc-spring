@@ -3,9 +3,11 @@ package br.com.content.service.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -105,6 +107,26 @@ class ProductServiceImplTest {
 
         assertThatExceptionOfType(NotFoundException.class)
                 .isThrownBy(() -> productServiceImpl.delete(id));
+    }
+    
+    @Test
+    @DisplayName("when findAll product service is call a list of product is returned")
+    public void findAllProductsSuccessTest() {
+        var products = List.of(
+                new Product(1L, "product name", 10.00, 10),
+                new Product(2L, "other product name", 15.00, 20)
+        );
+
+        when(productRepository.findAll()).thenReturn(products);
+
+        var productOutputDTO = productServiceImpl.findAll();
+
+        assertThat(productOutputDTO)
+                .extracting("id", "name", "price", "quantityInStock")
+                .contains(
+                        tuple(1L, "product name", 10.00, 10),
+                        tuple(2L, "other product name", 15.00, 20)
+                );
     }
 	
 }

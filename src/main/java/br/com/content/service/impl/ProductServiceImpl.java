@@ -1,6 +1,7 @@
 package br.com.content.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -46,8 +47,9 @@ public class ProductServiceImpl implements IProductService {
 
 	@Override
 	public List<ProductOutputDTO> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Product> productList = this.repository.findAll();
+		return productList.stream()
+				.map(ProductConverterUtil::productToProductOutputDTO).collect(Collectors.toList());
 	}
 	
 	private void checkDuplicity(String name) {
